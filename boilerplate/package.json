@@ -1,0 +1,16 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "umi dev",
+    "build": "umi build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "umi": "4.0.0-rc.20"
+  }
+}
