@@ -1,5 +1,5 @@
 {
-  "name": "boilerplate",
+  "name": "umi4-course",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,5 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "umi": "4.0.0-rc.20"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.10",
+    "typescript": "^4"
   }
 }
