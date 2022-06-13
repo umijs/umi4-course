@@ -7,7 +7,7 @@ export function render(oldRender: any) {
 //       oldRender();
 //     }
 //   });
-  setTimeout(() => {
+  // setTimeout(() => {
     oldRender();
-  }, 3000);
+  // }, 3000);
 }
