@@ -1,50 +1,73 @@
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { PieChartOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu } from "antd";
-import React, { useState } from "react";
-import { Outlet } from "umi";
+import { Breadcrumb, Layout, Menu, Result, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import { Outlet, useAppData, useNavigate, useLocation } from "umi";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
+const menuHash: any = {
+  "/": {
+    label: "首页",
+    icon: <PieChartOutlined />,
+  },
+  user: {
+    label: "用户",
+    icon: <UserOutlined />,
+  },
+};
 
-const items: MenuItem[] = [
-  getItem("Option 1", "1", <PieChartOutlined />),
-  getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
-    getItem("Bill", "4"),
-    getItem("Alex", "5"),
-  ]),
-  getItem("Team", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
-  ]),
-  getItem("Files", "9", <FileOutlined />),
-];
+const unaccessible = ["/hooks", "/useEffect", "/usemodel", "/useState"];
+
+const getItem = (path: string, children?: MenuItem[]) => {
+  const route = menuHash[path];
+  return {
+    key: path.startsWith("/") ? path : `/${path}`,
+    icon: route?.icon || <></>,
+    children,
+    label: route?.label || path,
+  } as MenuItem;
+};
+
+const routesToMenu = (routes: any[]): MenuItem[] => {
+  return routes
+    .filter((i) => {
+      const path = i.path.startsWith("/") ? i.path : `/${i.path}`;
+      return !unaccessible.includes(path);
+    })
+    .map((route) => {
+      const { path, children } = route;
+      if (children) {
+        return getItem(path, routesToMenu(children));
+      }
+      return getItem(path);
+    });
+};
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { clientRoutes } = useAppData();
+  const { children } = clientRoutes[0];
+  const items = routesToMenu(children);
+
+  if (unaccessible.includes(location.pathname)) {
+    return (
+      <Result
+        status="403"
+        title="403"
+        subTitle="抱歉，你没有权限访问这个页面！"
+        extra={
+          <Button type="primary" onClick={() => navigate(-1)}>
+            返回上一个页面
+          </Button>
+        }
+      />
+    );
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -66,7 +89,10 @@ const App: React.FC = () => {
         </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          onClick={(e) => {
+            navigate(e?.key);
+          }}
+          defaultSelectedKeys={[location.pathname]}
           mode="inline"
           items={items}
         />
