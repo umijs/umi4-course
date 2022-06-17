@@ -1,4 +1,8 @@
-import { PieChartOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  PieChartOutlined,
+  UserOutlined,
+  TableOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, Result, Button } from "antd";
 import React, { useState, useEffect } from "react";
@@ -16,6 +20,10 @@ const menuHash: any = {
   user: {
     label: "用户",
     icon: <UserOutlined />,
+  },
+  listcard: {
+    label: "卡片列表",
+    icon: <TableOutlined />,
   },
 };
 
