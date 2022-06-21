@@ -6,7 +6,9 @@ export default defineConfig({
   plugins: [
     require.resolve("@umijs/plugins/dist/model"),
     require.resolve("@umijs/plugins/dist/antd"),
+    require.resolve("@alita/plugins/dist/request"),
   ],
   model: {},
+  request: {},
   antd: {},
 });
