@@ -12,14 +12,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@alita/plugins": "^3.0.0",
+    "@alita/plugins": "3.0.3",
     "@ant-design/icons": "^4.7.0",
     "@umijs/max-plugin-openapi": "^1.0.0",
-    "@umijs/plugins": "4.0.0",
+    "@umijs/plugins": "4.0.1",
     "antd": "^4.21.1",
     "mockjs": "^1.1.0",
     "swagger-ui-react": "^4.12.0",
-    "umi": "4.0.0"
+    "umi": "4.0.1"
   },
   "devDependencies": {
     "@types/mockjs": "^1.0.6",

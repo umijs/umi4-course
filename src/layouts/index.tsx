@@ -6,7 +6,8 @@ import {
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, Result, Button } from "antd";
 import React, { useState, useEffect } from "react";
-import { Outlet, useAppData, useNavigate, useLocation } from "umi";
+import { Outlet, useAppData, useNavigate, useLocation, connect } from "umi";
+import type { ConnectProps, GlobalModelState } from "umi";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -27,7 +28,7 @@ const menuHash: any = {
   },
 };
 
-const unaccessible = ["/hooks", "/useEffect", "/usemodel", "/useState"];
+// const unaccessible = ["/hooks", "/useEffect", "/usemodel", "/useState"];
 
 const getItem = (path: string, children?: MenuItem[]) => {
   const route = menuHash[path];
@@ -39,27 +40,31 @@ const getItem = (path: string, children?: MenuItem[]) => {
   } as MenuItem;
 };
 
-const routesToMenu = (routes: any[]): MenuItem[] => {
-  return routes
-    .filter((i) => {
-      const path = i.path.startsWith("/") ? i.path : `/${i.path}`;
-      return !unaccessible.includes(path);
-    })
-    .map((route) => {
-      const { path, children } = route;
-      if (children) {
-        return getItem(path, routesToMenu(children));
-      }
-      return getItem(path);
-    });
-};
+interface AppProps extends ConnectProps {
+  global: GlobalModelState;
+}
 
-const App: React.FC = () => {
+const App: React.FC<AppProps> = ({ global }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const { clientRoutes } = useAppData();
-  const { children } = clientRoutes[0];
+  const { children = [] } = clientRoutes[0];
+  const { unaccessible } = global;
+  const routesToMenu = (routes: any[]): MenuItem[] => {
+    return routes
+      .filter((i) => {
+        const path = i.path.startsWith("/") ? i.path : `/${i.path}`;
+        return !unaccessible.includes(path);
+      })
+      .map((route) => {
+        const { path, children } = route;
+        if (children) {
+          return getItem(path, routesToMenu(children));
+        }
+        return getItem(path);
+      });
+  };
   const items = routesToMenu(children);
 
   if (unaccessible.includes(location.pathname)) {
@@ -124,4 +129,6 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default connect(({ global }: { global: GlobalModelState }) => ({
+  global,
+}))(App);
